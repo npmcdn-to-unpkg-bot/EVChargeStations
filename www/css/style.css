@@ -1,0 +1,55 @@
+.esriPopup .title {
+	width: 190px;
+}
+
+#esriMap {
+    display: block;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#basemapToggleDiv {
+	position: absolute;
+	top: 100px;
+	left: 20px;
+	z-index: 50;
+}
+
+#bcMain {
+    width: 100%;
+    height: 100%;
+}
+
+#cpTop {
+    height: 40px;
+}
+
+#cpLeft {
+    width: 215px;
+    overflow: hidden;
+}
+
+#divSearch {
+    display: block;
+    position: absolute;
+    z-index: 2;
+    top: 25px;
+    left: 75px;
+}
+
+#divLocateButton {
+    display: block;
+    position: absolute;
+    z-index: 3;
+    top: 100px;
+    left: 25px;
+}
+
+#searchDiv {
+	position: absolute;
+    z-index: 20;
+    top: 20px;
+    left: 74px;
+}

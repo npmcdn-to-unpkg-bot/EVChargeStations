@@ -1,0 +1,31 @@
+<ion-view view-title="Map">
+  <ion-content scroll="false">
+	
+        <esri-map id="map" center="map.center" zoom="map.zoom" basemap="{{map.basemap}}" load="onMapLoad">
+			
+			<esri-feature-layer
+				url="http://services6.arcgis.com/GppfEaYzw3YLUhtB/arcgis/rest/services/Hawaii_Public_Electric_Vehicle_Charging_Stations/FeatureServer/0"
+				layer-options="{
+					outFields: ['*']
+				}">
+				
+				<esri-info-template title=${Property_Business_Name}>
+					<span>Address: ${Street_Address}<br>
+					${City}, ${Island}, ${Zip_Code}</span><br>
+					<span>Location: ${Charger_Location}</span><br>
+					<span>Hours of Operation: ${Hours_of_Operation}</span><br>
+					<span>Charge Fee: ${Charger_Fee}</span><br>
+					<hr>
+					<span>Notes: ${Notes}</span>
+				</esri-info-template>
+				
+			</esri-feature-layer>
+			
+        </esri-map>
+
+	<button ng-click="activateDrawTool('Point')">Point</button>
+	<div id="searchDiv"></div>
+	<div id="basemapToggleDiv"></div>
+	
+  </ion-content>
+</ion-view>
