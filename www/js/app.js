@@ -55,7 +55,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     .state('app.map', {
       url: '/map',
 	  params: {
-		pGeometry: null
+		  pGeometry: null
 	  },
 	  cache: true,
       views: {

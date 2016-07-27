@@ -1,7 +1,7 @@
 <ion-view view-title="Map">
   <ion-content scroll="false">
 	
-        <esri-map id="map" center="map.center" zoom="map.zoom" basemap="{{map.basemap}}" load="onMapLoad">
+        <esri-map id="map" center="map.center" zoom="map.zoom" basemap="{{map.basemap}}" load="onMapLoad" register-as="evcsMap">
 			
 			<esri-feature-layer
 				url="http://services6.arcgis.com/GppfEaYzw3YLUhtB/arcgis/rest/services/Hawaii_Public_Electric_Vehicle_Charging_Stations/FeatureServer/0"

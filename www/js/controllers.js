@@ -69,7 +69,7 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('BrowseController', function($scope, $state, $ionicLoading, remoteService) {
+.controller('BrowseController', function($scope, $state, $ionicLoading, remoteService, esriRegistry, esriLoader) {
 	$ionicLoading.show({
       template: 'Loading...'
     });
@@ -88,7 +88,36 @@ angular.module('starter.controllers', [])
 		});
 		
 	$scope.onListItemClick = function(geometry) {
-		$state.go('app.map', {pGeometry: geometry});
+/*		
+		esriRegistry.get('evcsMap').then(
+			function (map) {
+				console.log(map);
+				
+				esriLoader.require([
+					'esri/geometry/Point',
+					'esri/SpatialReference'
+				], function (
+					Point,
+					SpatialReference
+				) {
+					console.log("centermap");
+					var point = new Point( -118.15, 33.80, new SpatialReference({ wkid: 4326 }) );
+					map.centerAndZoom(point, 16);
+					$state.go('app.map');
+					
+					
+				});
+				
+				//map.centerAndZoom(geometry.pGeometry, 16);
+
+			},
+			function (error) {
+				console.error(error);
+			});
+*/				
+		
+		$state.go('app.map', {pGeometry: geometry});		
+		
 	}
 })
 
