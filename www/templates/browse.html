@@ -3,7 +3,7 @@
 		<ion-list>
 			<ion-item ng-repeat="feature in features">
 <!--				<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({pGeometry : feature.geometry})" type="item-text-wrap">	-->
-					<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({lng:{{feature.attributes.Longitude}}, lat:{{feature.attributes.Latitude}}})" type="item-text-wrap">
+					<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({lat:{{feature.attributes.Latitude}}, lng:{{feature.attributes.Longitude}}})" type="item-text-wrap">
 					{{attribute}}: {{data}}
 				</div>
 			</ion-item>

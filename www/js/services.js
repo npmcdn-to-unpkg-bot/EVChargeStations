@@ -31,3 +31,41 @@ angular.module('starter.services', [])
 	
 	return service;
 })
+
+.factory('mapService', function() {
+	var service = {};
+	
+	var geolocation = {
+		lat: 21.5,
+		lng: -157.8583
+	};
+	
+	var zoom = 10;
+	var basemap = "topo";
+	
+	service.setCenter = function(input) {
+		geolocation = input;
+	}
+	
+	service.getCenter = function() {
+		return geolocation;
+	}
+	
+	service.setZoom = function(input) {
+		zoom = input;
+	}
+	
+	service.getZoom = function() {
+		return zoom;
+	}
+	
+	service.setBasemap = function(input) {
+		basemap = input;
+	}
+	
+	service.getBasemap = function() {
+		return basemap;
+	}
+	
+	return service;
+})

@@ -57,7 +57,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 	  params: {
 		  pGeometry: null
 	  },
-	  cache: true,
+	  cache: false,
       views: {
         'menuContent': {
           templateUrl: 'templates/map.html',

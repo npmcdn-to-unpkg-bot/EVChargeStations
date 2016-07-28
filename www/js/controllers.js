@@ -42,34 +42,30 @@ angular.module('starter.controllers', [])
   
 })
 
-.controller('SearchController', function($scope, $state, locateService) {
+.controller('SearchController', function($scope, $state, locateService, mapService) {
 	$scope.getLocation = function() {
-		
-		
-		// CHECK IF BROSWER GEOLOCATION IS AVAILABLE
-		//if (navigator.geolocation) {
-			locateService.getLocation().then(
-				function (result) {
-					console.log(result);
-					var geometry = {
-						lng: result.coords.longitude,
-						lat: result.coords.latitude
-					}
-					$state.go('app.map', {pGeometry: geometry});
-				},
-				function (error) {
-					console.error(error);
-					alert("Sorry, no geolocation services are available. Please allow permission to use location services.");
-				});
-		//}
-		//else {
-		//	alert("Sorry, no geolocation services are available. Please allow permission to use location services.");
-		//}
+		locateService.getLocation().then(
+			function (result) {
+				console.log(result);
+				var geolocation = {
+					lng: result.coords.longitude,
+					lat: result.coords.latitude
+				}
+				
+				mapService.setCenter(geolocation);
+				mapService.setZoom(16);
+				
+				$state.go('app.map');
+			},
+			function (error) {
+				console.error(error);
+				alert("Sorry, no geolocation services are available. Please allow permission to use location services.");
+			});
 	}
 })
 
 
-.controller('BrowseController', function($scope, $state, $ionicLoading, remoteService, esriRegistry, esriLoader) {
+.controller('BrowseController', function($scope, $rootScope, $state, $ionicLoading, remoteService, esriRegistry, esriLoader, mapService) {
 	$ionicLoading.show({
       template: 'Loading...'
     });
@@ -87,71 +83,42 @@ angular.module('starter.controllers', [])
 			$ionicLoading.hide();
 		});
 		
-	$scope.onListItemClick = function(geometry) {
-/*		
-		esriRegistry.get('evcsMap').then(
-			function (map) {
-				console.log(map);
-				
-				esriLoader.require([
-					'esri/geometry/Point',
-					'esri/SpatialReference'
-				], function (
-					Point,
-					SpatialReference
-				) {
-					console.log("centermap");
-					var point = new Point( -118.15, 33.80, new SpatialReference({ wkid: 4326 }) );
-					map.centerAndZoom(point, 16);
-					$state.go('app.map');
-					
-					
-				});
-				
-				//map.centerAndZoom(geometry.pGeometry, 16);
-
-			},
-			function (error) {
-				console.error(error);
-			});
-*/				
+	$scope.onListItemClick = function(geolocation) {
 		
-		$state.go('app.map', {pGeometry: geometry});		
+		mapService.setCenter(geolocation);
+		mapService.setZoom(16);
+		
+		$state.go('app.map');		
 		
 	}
 })
 
-.controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate) {
+.controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate, mapService) {
 	$scope.$on('$ionicView.enter', function(){
 		$ionicSideMenuDelegate.canDragContent(false);
-		
-		if ($stateParams.pGeometry)
-			$scope.centerMap();
 	});
 	$scope.$on('$ionicView.leave', function(){
 		$ionicSideMenuDelegate.canDragContent(true);
 	});
-	
+
+	// INITIALIZE MAP VAR
 	$scope.map = {
 		center: {
-			lng: -157.8583,
-            lat: 21.5
+			lng: null,
+            lat: null
         },
-        zoom: 10,
-		basemap: "hybrid"
+        zoom: null,
+		basemap: null
     };
 	
-	$scope.centerMap = function() {
-		console.log($stateParams);
-		var geometry = $stateParams.pGeometry;
-		//-155.9913758, lat: 19.8271119
-		$scope.map.center.lng = geometry.lng;
-		$scope.map.center.lat = geometry.lat;
-		$scope.map.zoom = 16;
-	}
+	$scope.map.basemap = mapService.getBasemap();
+	$scope.map.center = mapService.getCenter();
+	$scope.map.zoom = mapService.getZoom();
 	
+	/* TESTING
+	$scope.onMapLoad = function(map) {
 	
-$scope.onMapLoad = function(map) {
+
 
             // this example requires other Esri modules like graphics, symbols, and toolbars
             // so we load them up front using the esriLoader
@@ -241,7 +208,5 @@ $scope.onMapLoad = function(map) {
             });
 
         };
-
-	
-	
+		*/
 });
