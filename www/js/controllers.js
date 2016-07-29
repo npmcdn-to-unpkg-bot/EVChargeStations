@@ -52,22 +52,17 @@ angular.module('starter.controllers', [])
 	
 	$scope.selected = $scope.islands[0];
 
-	$scope.search = function(island) {
+	$scope.search = function(selected) {
+		
+		var island = selected.label;
+		
 		var definition = "1=1";
-		if (island.id != 1) {
+		if (selected.id != 1) {
 			// SET CENTER/ZOOM FOR EACH ISLAND
-			definition = "Island='" + island.label + "'";
+			definition = "Island='" + island + "'";
 		}
 		
-		var geolocation = {
-			lat: 20.7,
-			lng: -157.8583
-		};
-	
-		var zoom = 7;
-		
-		mapService.setCenter(geolocation);
-		mapService.setZoom(zoom);
+		mapService.setCenterZoomIsland(island);
 		
 		mapService.setDefinitionExpression(definition);
 		$state.go('app.map');
@@ -122,15 +117,8 @@ angular.module('starter.controllers', [])
 		$ionicSideMenuDelegate.canDragContent(true);
 	});
 
-	// INITIALIZE MAP VAR
-	$scope.map = {
-		center: {
-			lng: null,
-            lat: null
-        },
-        zoom: null,
-		basemap: null
-    };
+	// INITIALIZE MAP OBJECT
+	$scope.map = {};
 	
 	$scope.map.basemap = mapService.getBasemap();
 	$scope.map.center = mapService.getCenter();
@@ -138,7 +126,7 @@ angular.module('starter.controllers', [])
 	
 	$scope.definitionExpression = mapService.getDefinitionExpression();
 	
-	/* TESTING
+	
 	$scope.onMapLoad = function(map) {
 	
 
@@ -150,22 +138,36 @@ angular.module('starter.controllers', [])
                 'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol',
                 'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
                 'esri/graphic',
+				'esri/geometry/Point',
                 'esri/Color'
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol,
                 PictureFillSymbol, CartographicLineSymbol,
-                Graphic,
+                Graphic, Point,
                 Color
             ) {
 
                 var tb;
 
                 // markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
-                var markerSymbol = new SimpleMarkerSymbol();
-                markerSymbol.setPath('M16,4.938c-7.732,0-14,4.701-14,10.5c0,1.981,0.741,3.833,2.016,5.414L2,25.272l5.613-1.44c2.339,1.316,5.237,2.106,8.387,2.106c7.732,0,14-4.701,14-10.5S23.732,4.938,16,4.938zM16.868,21.375h-1.969v-1.889h1.969V21.375zM16.772,18.094h-1.777l-0.176-8.083h2.113L16.772,18.094z');
-                markerSymbol.setColor(new Color('#00FFFF'));
+var line = new SimpleLineSymbol();
+line.setStyle(SimpleLineSymbol.STYLE_DASH);
+line.setWidth(6);
+line.setColor(new Color([169, 0, 230, 1]));
 
+var marker = new SimpleMarkerSymbol();
+marker.setOffset(0, 0);
+marker.setColor(new Color([223, 115, 255, 0.52]));
+marker.setSize(25);
+marker.setOutline(line);
+
+var currentGeolocation = new Graphic(new Point(mapService.getCenter().lng, mapService.getCenter().lat), marker);
+// TESTING
+map.graphics.add(currentGeolocation);
+
+map.graphics.remove(currentGeolocation);
+				
                 // lineSymbol used for freehand polyline, polyline and line.
                 var lineSymbol = new CartographicLineSymbol(
                     CartographicLineSymbol.STYLE_SOLID,
@@ -231,5 +233,5 @@ angular.module('starter.controllers', [])
             });
 
         };
-		*/
+		
 });

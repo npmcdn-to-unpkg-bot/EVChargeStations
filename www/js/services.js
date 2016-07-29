@@ -35,13 +35,48 @@ angular.module('starter.services', [])
 .factory('mapService', function() {
 	var service = {};
 	
-	// DEFAULTS TO ENTIRE ISLAND CHAIN
-	var geolocation = {
-		lat: 20.7,
-		lng: -157.8583
+	const ISLAND = {
+		kauai: {
+			geolocation: {
+				lat: 22.04355712195575,
+				lng: -159.48930563502853
+			},
+			zoom: 10
+		},
+		oahu: {
+			geolocation: {
+				lat: 21.489018269313952,
+				lng: -157.9319936233096
+			},
+			zoom: 10
+		},
+		maui: {
+			geolocation: {
+				lat: 20.807645111688178,
+				lng: -156.32386984401285
+			},
+			zoom: 10
+		},
+		hawaii: {
+			geolocation: {
+				lat: 19.65904501936837,
+				lng: -155.56443991237202
+			},
+			zoom: 8
+		},
+		all: {
+			geolocation: {
+				lat: 20.7,
+				lng: -157.8583
+			},
+			zoom: 7
+		}
 	};
 	
-	var zoom = 7;
+	// DEFAULTS TO ENTIRE ISLAND CHAIN
+	var geolocation = ISLAND.all.geolocation;
+	
+	var zoom = ISLAND.all.zoom;
 	var basemap = "topo";
 	var definitionExpression = "1=1";
 	
@@ -59,6 +94,29 @@ angular.module('starter.services', [])
 	
 	service.getZoom = function() {
 		return zoom;
+	}
+	
+	service.setCenterZoomIsland = function(island) {
+		if (island == "Kauai") {
+			geolocation = ISLAND.kauai.geolocation;
+			zoom = ISLAND.kauai.zoom;
+		}
+		else if (island == "Oahu") {
+			geolocation = ISLAND.oahu.geolocation;
+			zoom = ISLAND.oahu.zoom;
+		}
+		else if (island == "Maui") {
+			geolocation = ISLAND.maui.geolocation;
+			zoom = ISLAND.maui.zoom;
+		}
+		else if (island == "Hawaii") {
+			geolocation = ISLAND.hawaii.geolocation;
+			zoom = ISLAND.hawaii.zoom;
+		}
+		else {
+			geolocation = ISLAND.all.geolocation;
+			zoom = ISLAND.all.zoom;
+		}
 	}
 	
 	service.setBasemap = function(input) {
