@@ -24,34 +24,45 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 })
 
 .config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+	$stateProvider
 
-  .state('app', {
-    url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
-  })
+	.state('app', {
+		url: '/app',
+		abstract: true,
+		templateUrl: 'templates/menu.html',
+		controller: 'AppCtrl'
+	})
 
-  .state('app.search', {
-    url: '/search',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/search.html',
-		controller: 'SearchController'
-      }
-    }
-  })
+	.state('app.home', {
+		url: '/home',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/home.html',
+				controller: 'HomeController'
+			}
+		}
+	})
+  
+	.state('app.search', {
+		url: '/search',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/search.html',
+				controller: 'SearchController'
+			}
+		}
+	})
 
-  .state('app.browse', {
-      url: '/browse',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/browse.html',
-		  controller: 'BrowseController'
-        }
-      }
+	.state('app.browse', {
+		url: '/browse',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/browse.html',
+				controller: 'BrowseController'
+			}
+		}
     })
+	
     .state('app.map', {
       url: '/map',
 	  params: {
@@ -67,15 +78,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       }
     })
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistsController'
-      }
-    }
-  });
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/search');
+	.state('app.single', {
+		url: '/playlists/:playlistId',
+		views: {
+		  'menuContent': {
+			templateUrl: 'templates/playlist.html',
+			controller: 'PlaylistsController'
+		  }
+		}
+	});
+	
+
+	$urlRouterProvider.otherwise('/app/home');
 });

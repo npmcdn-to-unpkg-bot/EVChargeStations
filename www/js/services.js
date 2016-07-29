@@ -35,12 +35,13 @@ angular.module('starter.services', [])
 .factory('mapService', function() {
 	var service = {};
 	
+	// DEFAULTS TO ENTIRE ISLAND CHAIN
 	var geolocation = {
-		lat: 21.5,
+		lat: 20.7,
 		lng: -157.8583
 	};
 	
-	var zoom = 10;
+	var zoom = 7;
 	var basemap = "topo";
 	
 	service.setCenter = function(input) {
