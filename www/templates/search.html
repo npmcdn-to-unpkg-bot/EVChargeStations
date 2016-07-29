@@ -1,5 +1,17 @@
 <ion-view view-title="Search">
-  <ion-content>
+	<ion-content>
+		<div class="list">
 
-  </ion-content>
+		  <label class="item item-input item-select">
+			<div class="input-label">
+			  Island
+			</div>
+			<select ng-options="island as island.label for island in islands" ng-model="selected"></select>
+		  </label>
+
+		</div>
+		<button class="button button-full button-royal" ng-click="search(selected)">
+			Search
+		</button>
+	</ion-content>
 </ion-view>

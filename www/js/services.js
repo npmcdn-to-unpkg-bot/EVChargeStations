@@ -43,6 +43,7 @@ angular.module('starter.services', [])
 	
 	var zoom = 7;
 	var basemap = "topo";
+	var definitionExpression = "1=1";
 	
 	service.setCenter = function(input) {
 		geolocation = input;
@@ -66,6 +67,14 @@ angular.module('starter.services', [])
 	
 	service.getBasemap = function() {
 		return basemap;
+	}
+	
+	service.setDefinitionExpression = function(input) {
+		definitionExpression = input;
+	}
+	
+	service.getDefinitionExpression = function() {
+		return definitionExpression;
 	}
 	
 	return service;

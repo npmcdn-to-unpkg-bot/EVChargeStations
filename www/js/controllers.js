@@ -26,8 +26,42 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('SearchController', function() {
+.controller('SearchController', function($scope, $state, mapService) {
+	$scope.islands = [
+		{
+			id: 1,
+			label: 'All'
+		},
+		{
+			id: 2,
+			label: 'Hawaii'
+		},
+		{
+			id: 3,
+			label: 'Kauai'
+		},
+		{
+			id: 4,
+			label: 'Maui'
+		},
+		{
+			id: 5,
+			label: 'Oahu'
+		}
+	];
+	
+	$scope.selected = $scope.islands[0];
 
+	$scope.search = function(island) {
+		var definition = "1=1";
+		if (island.id != 1) {
+			// SET CENTER/ZOOM FOR EACH ISLAND
+			definition = "Island='" + island.label + "'";
+		}
+			
+		mapService.setDefinitionExpression(definition);
+		$state.go('app.map');
+	}
 })
 
 
@@ -53,10 +87,21 @@ angular.module('starter.controllers', [])
 		
 		mapService.setCenter(geolocation);
 		mapService.setZoom(16);
+		mapService.setDefinitionExpression("1=1");
 		
 		$state.go('app.map');		
 		
 	}
+})
+
+.controller('DetailController', function($ionicLoading) {
+	$ionicLoading.show({
+      template: 'Loading...'
+    });
+	
+
+	$ionicLoading.hide();
+
 })
 
 .controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate, mapService) {
@@ -80,6 +125,8 @@ angular.module('starter.controllers', [])
 	$scope.map.basemap = mapService.getBasemap();
 	$scope.map.center = mapService.getCenter();
 	$scope.map.zoom = mapService.getZoom();
+	
+	$scope.definitionExpression = mapService.getDefinitionExpression();
 	
 	/* TESTING
 	$scope.onMapLoad = function(map) {
