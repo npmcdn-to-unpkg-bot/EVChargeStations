@@ -58,7 +58,17 @@ angular.module('starter.controllers', [])
 			// SET CENTER/ZOOM FOR EACH ISLAND
 			definition = "Island='" + island.label + "'";
 		}
-			
+		
+		var geolocation = {
+			lat: 20.7,
+			lng: -157.8583
+		};
+	
+		var zoom = 7;
+		
+		mapService.setCenter(geolocation);
+		mapService.setZoom(zoom);
+		
 		mapService.setDefinitionExpression(definition);
 		$state.go('app.map');
 	}
