@@ -16,6 +16,7 @@ angular.module('starter.controllers', [])
 				
 				mapService.setCenter(geolocation);
 				mapService.setZoom(16);
+				mapService.setShowCurrentGeolocationSymbol(true);
 				
 				$state.go('app.map');
 			},
@@ -63,8 +64,8 @@ angular.module('starter.controllers', [])
 		}
 		
 		mapService.setCenterZoomIsland(island);
-		
 		mapService.setDefinitionExpression(definition);
+		mapService.setShowCurrentGeolocationSymbol(false);
 		$state.go('app.map');
 	}
 })
@@ -79,7 +80,7 @@ angular.module('starter.controllers', [])
 		function (result) {
 			var features = result.data.features;
 			$scope.features = features;
-			console.log(features);
+			//console.log(features);
 			
 			$ionicLoading.hide();
 		},
@@ -88,24 +89,27 @@ angular.module('starter.controllers', [])
 			$ionicLoading.hide();
 		});
 		
-	$scope.onListItemClick = function(geolocation) {
+	$scope.onListItemClick = function(attributes) {
 		
-		mapService.setCenter(geolocation);
-		mapService.setZoom(16);
-		mapService.setDefinitionExpression("1=1");
+		$state.go('app.detail', {attributes});		
 		
-		$state.go('app.map');		
-		
+		/*
+
+		*/
 	}
 })
 
-.controller('DetailController', function($ionicLoading) {
-	$ionicLoading.show({
-      template: 'Loading...'
-    });
+.controller('DetailController', function($scope, $stateParams, $state, mapService) {
+	$scope.attributes = $stateParams.attributes;
 	
-
-	$ionicLoading.hide();
+	$scope.geolocateOnMap = function(geolocation) {
+		mapService.setCenter(geolocation);
+		mapService.setZoom(16);
+		mapService.setDefinitionExpression("1=1");
+		mapService.setShowCurrentGeolocationSymbol(true);
+		
+		$state.go('app.map');				
+	}
 
 })
 
@@ -129,8 +133,6 @@ angular.module('starter.controllers', [])
 	
 	$scope.onMapLoad = function(map) {
 	
-
-
             // this example requires other Esri modules like graphics, symbols, and toolbars
             // so we load them up front using the esriLoader
             esriLoader.require([
@@ -164,72 +166,12 @@ marker.setOutline(line);
 
 var currentGeolocation = new Graphic(new Point(mapService.getCenter().lng, mapService.getCenter().lat), marker);
 // TESTING
-map.graphics.add(currentGeolocation);
-
-map.graphics.remove(currentGeolocation);
+if (mapService.getShowCurrentGeolocationSymbol())
+	map.graphics.add(currentGeolocation);
+else
+	map.graphics.remove(currentGeolocation);
 				
-                // lineSymbol used for freehand polyline, polyline and line.
-                var lineSymbol = new CartographicLineSymbol(
-                    CartographicLineSymbol.STYLE_SOLID,
-                    new Color([255, 0, 0]), 10,
-                    CartographicLineSymbol.CAP_ROUND,
-                    CartographicLineSymbol.JOIN_MITER, 5
-                );
 
-                // fill symbol used for extent, polygon and freehand polygon, use a picture fill symbol
-                // the images folder contains additional fill images, other options: sand.png, swamp.png or stiple.png
-                var fillSymbol = new PictureFillSymbol(
-                    // 'images/mangrove.png',
-                    '//developers.arcgis.com/javascript/samples/graphics_add/images/mangrove.png',
-                    new SimpleLineSymbol(
-                        SimpleLineSymbol.STYLE_SOLID,
-                        new Color('#000'),
-                        1
-                    ),
-                    42,
-                    42
-                );
-
-                // get a local reference to the map object once it's loaded
-                // and initialize the drawing toolbar
-                function initToolbar(mapObj) {
-                    map = mapObj;
-                    tb = new Draw(map);
-                    tb.on('draw-end', function(e) {
-                        $scope.$apply(function() {
-                            addGraphic(e);
-                        });
-                    });
-
-                    // set the active tool once a button is clicked
-                    $scope.activateDrawTool = activateDrawTool;
-                }
-
-                function activateDrawTool(tool) {
-                    map.disableMapNavigation();
-                    tb.activate(tool.toLowerCase());
-                }
-
-                function addGraphic(evt) {
-                    //deactivate the toolbar and clear existing graphics
-                    tb.deactivate();
-                    map.enableMapNavigation();
-
-                    // figure out which symbol to use
-                    var symbol;
-                    if (evt.geometry.type === 'point' || evt.geometry.type === 'multipoint') {
-                        symbol = markerSymbol;
-                    } else if (evt.geometry.type === 'line' || evt.geometry.type === 'polyline') {
-                        symbol = lineSymbol;
-                    } else {
-                        symbol = fillSymbol;
-                    }
-
-                    map.graphics.add(new Graphic(evt.geometry, symbol));
-                }
-
-                // bind the toolbar to the map
-                initToolbar(map);
             });
 
         };

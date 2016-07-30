@@ -79,6 +79,7 @@ angular.module('starter.services', [])
 	var zoom = ISLAND.all.zoom;
 	var basemap = "topo";
 	var definitionExpression = "1=1";
+	var showCurrentGeolocationSymbol = false;
 	
 	service.setCenter = function(input) {
 		geolocation = input;
@@ -134,6 +135,15 @@ angular.module('starter.services', [])
 	service.getDefinitionExpression = function() {
 		return definitionExpression;
 	}
+	
+	service.setShowCurrentGeolocationSymbol = function(input) {
+		showCurrentGeolocationSymbol = input;
+	}
+	
+	service.getShowCurrentGeolocationSymbol = function() {
+		return showCurrentGeolocationSymbol;
+	}
+	
 	
 	return service;
 })

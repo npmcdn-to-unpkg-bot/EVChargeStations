@@ -63,11 +63,21 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 		}
     })
 	
+	.state('app.detail', {
+		url: '/detail',
+		params: {
+			attributes: null
+		},
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/detail.html',
+				controller: 'DetailController'
+			}
+		}
+    })
+	
     .state('app.map', {
       url: '/map',
-	  params: {
-		  pGeometry: null
-	  },
 	  cache: false,
       views: {
         'menuContent': {
@@ -76,18 +86,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 		  controllerAs: 'vm'
         }
       }
-    })
-
-	.state('app.single', {
-		url: '/playlists/:playlistId',
-		views: {
-		  'menuContent': {
-			templateUrl: 'templates/playlist.html',
-			controller: 'PlaylistsController'
-		  }
-		}
-	});
-	
+    });	
 
 	$urlRouterProvider.otherwise('/app/home');
 });

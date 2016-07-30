@@ -1,12 +1,16 @@
-<ion-view view-title="Browse"> 
-	<ion-content>
-		<ion-list>
-			<ion-item ng-repeat="feature in features">
-<!--				<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({pGeometry : feature.geometry})" type="item-text-wrap">	-->
-					<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({lat:{{feature.attributes.Latitude}}, lng:{{feature.attributes.Longitude}}})" type="item-text-wrap">
-					{{attribute}}: {{data}}
-				</div>
-			</ion-item>
-		</ion-list>
+<ion-view view-title="Details"> 
+	<ion-content class="has-header" ng-model="attributes">
+		<h3>Property/Business: {{attributes.Property_Business_Name}}</h3>
+		<p>Address: {{attributes.Street_Address}}<br>
+		{{attributes.City}}, {{attributes.Island}} {{attributes.Zip_Code}}</p>
+		<p>Charger Fee: {{attributes.Charger_Fee}}</p>
+		<p>Manufacturer: {{attributes.Manufacturer_s_}}</p>
+		<p>Notes: {{attributes.Notes}}</p>
+		<button ng-click="geolocateOnMap({lat:{{attributes.Latitude}}, lng:{{attributes.Longitude}}})">Map</button>
+		
+		<ion-item ng-repeat="(key, value) in attributes">
+			{{key}}: {{value}}
+		</ion-item>
+		
 	</ion-content>
 </ion-view>
