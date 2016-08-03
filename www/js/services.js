@@ -36,40 +36,57 @@ angular.module('starter.services', [])
 	var service = {};
 	
 	const ISLAND = {
-		kauai: {
+		all: {
 			geolocation: {
-				lat: 22.04355712195575,
-				lng: -159.48930563502853
+				lat: 20.7,
+				lng: -157.8583
 			},
-			zoom: 10
-		},
-		oahu: {
-			geolocation: {
-				lat: 21.489018269313952,
-				lng: -157.9319936233096
-			},
-			zoom: 10
-		},
-		maui: {
-			geolocation: {
-				lat: 20.807645111688178,
-				lng: -156.32386984401285
-			},
-			zoom: 10
+			zoom: 7,
+			label: "All"
 		},
 		hawaii: {
 			geolocation: {
 				lat: 19.65904501936837,
 				lng: -155.56443991237202
 			},
-			zoom: 8
+			zoom: 8,
+			label: "Hawaii"
 		},
-		all: {
+		kauai: {
 			geolocation: {
-				lat: 20.7,
-				lng: -157.8583
+				lat: 22.04355712195575,
+				lng: -159.48930563502853
 			},
-			zoom: 7
+			zoom: 10,
+			label: "Kauai"
+		},
+		maui: {
+			geolocation: {
+				lat: 20.807645111688178,
+				lng: -156.32386984401285
+			},
+			zoom: 10,
+			label: "Maui"
+		},
+		oahu: {
+			geolocation: {
+				lat: 21.489018269313952,
+				lng: -157.9319936233096
+			},
+			zoom: 10,
+			label: "Oahu"
+		}
+	};
+	
+	const CHARGE_FEE = {
+		any: {
+			label: 'Any'
+		},
+		free: {
+			label: 'Free'
+		},
+		paid: {
+			label: 'Paid'
 		}
 	};
 	
@@ -78,7 +95,7 @@ angular.module('starter.services', [])
 	
 	var zoom = ISLAND.all.zoom;
 	var basemap = "topo";
-	var definitionExpression = "1=1";
+	var definitionExpression = "";
 	var showCurrentGeolocationSymbol = false;
 	
 	service.setCenter = function(input) {
@@ -136,6 +153,29 @@ angular.module('starter.services', [])
 		return definitionExpression;
 	}
 	
+	service.buildDefinitionExpression = function(input) {
+		var islandDefinition = "1=1";
+		var chargeFeeDefinition = "1=1";
+		var definition = "";
+		
+		var island = input.island;
+		var chargeFee = input.chargeFee;
+		
+		if (island != "All")
+			islandDefinition = "Island='" + island + "'";
+	
+		if (chargeFee != "Any")
+			chargeFeeDefinition = "Charge_Fees='" + chargeFee + "'";
+		
+			definition = islandDefinition + " AND " + chargeFeeDefinition;
+		
+		this.setDefinitionExpression(definition);
+	}
+	
+	service.clearDefinitionExpression = function() {
+		definitionExpression = "";
+	}
+	
 	service.setShowCurrentGeolocationSymbol = function(input) {
 		showCurrentGeolocationSymbol = input;
 	}
@@ -144,6 +184,13 @@ angular.module('starter.services', [])
 		return showCurrentGeolocationSymbol;
 	}
 	
+	service.getIslandList = function() {
+		return ISLAND;
+	}
+	
+	service.getChargeFeeList = function() {
+		return CHARGE_FEE;
+	}
 	
 	return service;
 })

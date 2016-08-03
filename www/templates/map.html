@@ -1,4 +1,7 @@
 <ion-view view-title="Map">
+    <ion-nav-buttons side="right">
+      <button class="button button-icon icon ion-settings" ng-click="popover.show($event)"></button>
+    </ion-nav-buttons>
   <ion-content scroll="false">
 	
         <esri-map id="map" center="map.center" zoom="map.zoom" basemap="{{map.basemap}}" load="onMapLoad" register-as="evcsMap">
@@ -23,10 +26,6 @@
 			</esri-feature-layer>
 			
         </esri-map>
-
-	<button ng-click="activateDrawTool('Point')">Point</button>
-	<div id="searchDiv"></div>
-	<div id="basemapToggleDiv"></div>
 	
   </ion-content>
 </ion-view>

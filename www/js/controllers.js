@@ -28,48 +28,35 @@ angular.module('starter.controllers', [])
 })
 
 .controller('SearchController', function($scope, $state, mapService) {
-	$scope.islands = [
-		{
-			id: 1,
-			label: 'All'
-		},
-		{
-			id: 2,
-			label: 'Hawaii'
-		},
-		{
-			id: 3,
-			label: 'Kauai'
-		},
-		{
-			id: 4,
-			label: 'Maui'
-		},
-		{
-			id: 5,
-			label: 'Oahu'
-		}
-	];
+	$scope.islands = mapService.getIslandList();
+	$scope.chargeFees = mapService.getChargeFeeList();
 	
-	$scope.selected = $scope.islands[0];
+	$scope.data = {};	
+	$scope.data.selectedIsland = $scope.islands.all;
+	$scope.data.selectedChargeFee = $scope.chargeFees.any;
 
-	$scope.search = function(selected) {
+	$scope.submit = function(data) {
+
+		// CLEAR PREVIOUS DEFINITION
+		mapService.clearDefinitionExpression();
 		
-		var island = selected.label;
+		var selections = {};
 		
-		var definition = "1=1";
-		if (selected.id != 1) {
-			// SET CENTER/ZOOM FOR EACH ISLAND
-			definition = "Island='" + island + "'";
+		var island = data.selectedIsland.label;
+		var chargeFee = data.selectedChargeFee.label;
+		
+		selections = {
+			island: island,
+			chargeFee: chargeFee
 		}
 		
+		mapService.buildDefinitionExpression(selections);
+				
 		mapService.setCenterZoomIsland(island);
-		mapService.setDefinitionExpression(definition);
 		mapService.setShowCurrentGeolocationSymbol(false);
 		$state.go('app.map');
 	}
 })
-
 
 .controller('BrowseController', function($scope, $rootScope, $state, $ionicLoading, remoteService, esriRegistry, esriLoader, mapService) {
 	$ionicLoading.show({
@@ -90,12 +77,12 @@ angular.module('starter.controllers', [])
 		});
 		
 	$scope.onListItemClick = function(attributes) {
-		
-		$state.go('app.detail', {attributes});		
-		
-		/*
+		var data = {
+			attributes: attributes
+		};
 
-		*/
+		$state.go('app.detail', data);		
+	
 	}
 })
 
@@ -105,7 +92,7 @@ angular.module('starter.controllers', [])
 	$scope.geolocateOnMap = function(geolocation) {
 		mapService.setCenter(geolocation);
 		mapService.setZoom(16);
-		mapService.setDefinitionExpression("1=1");
+		mapService.clearDefinitionExpression();
 		mapService.setShowCurrentGeolocationSymbol(true);
 		
 		$state.go('app.map');				
@@ -113,7 +100,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate, mapService) {
+.controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate, $ionicPopover, locateService, mapService, esriRegistry) {
 	$scope.$on('$ionicView.enter', function(){
 		$ionicSideMenuDelegate.canDragContent(false);
 	});
@@ -130,50 +117,195 @@ angular.module('starter.controllers', [])
 	
 	$scope.definitionExpression = mapService.getDefinitionExpression();
 	
+	$ionicPopover.fromTemplateUrl('templates/map_popover.html', {
+		scope: $scope,
+	}).then(function(popover) {
+		$scope.popover = popover;
+	});
+	
+	$scope.findNearestStation = function() {
+		
+		// GET CURRENT LOCATION
+		
+		esriRegistry.get('evcsMap').then(function(map){
+            /*
+			map.on('click', function(e) {
+                $scope.$apply(function() {
+                    $scope.map.point = e.mapPoint;
+					console.log(e.mapPoint);
+                });
+            });
+			*/
+			
+			
+			esriLoader.require([
+					"esri/IdentityManager",
+					'esri/toolbars/draw',
+					'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol',
+					'esri/graphic', 'esri/geometry/Point',
+					'esri/Color',
+					'esri/layers/GraphicsLayer', 'esri/renderers/SimpleRenderer',
+					'esri/tasks/ClosestFacilityTask', 'esri/tasks/ClosestFacilityParameters',
+					'esri/tasks/FeatureSet',
+					"esri/tasks/RouteTask", "esri/tasks/RouteParameters",
+					"dojo/_base/array"
+				], function(
+					IdentityManager,
+					Draw,
+					SimpleMarkerSymbol, SimpleLineSymbol,
+					Graphic, Point,
+					Color,
+					GraphicsLayer, SimpleRenderer,
+					ClosestFacilityTask, ClosestFacilityParameters,
+					FeatureSet,
+					RouteTask, RouteParameters,
+					array
+				) {
+
+
+				
+
+				
+				
+				var line = new SimpleLineSymbol();
+				line.setStyle(SimpleLineSymbol.STYLE_DASH);
+				line.setWidth(6);
+				line.setColor(new Color([169, 0, 230, 1]));
+
+				var marker = new SimpleMarkerSymbol();
+				marker.setOffset(0, 0);
+				marker.setColor(new Color([223, 115, 255, 0.52]));
+				marker.setSize(25);
+				marker.setOutline(line);
+						
+				var currentPoint = new Point(mapService.getCenter().lng, mapService.getCenter().lat);
+				var currentGeolocation = new Graphic(currentPoint, marker);
+				locationGeometry = currentGeolocation;
+				console.log("Current Geolocation");
+				console.log(locationGeometry);
+				
+				incidentFeatures = [];
+				incidentFeatures.push(locationGeometry);
+				incidents = new FeatureSet();
+				incidents.features = incidentFeatures;
+				
+				params = new ClosestFacilityParameters();
+				params.incidents = incidents;
+
+    			params.impedenceAttribute = "Miles";      
+			    params.defaultCutoff = 10.0;      
+			    params.returnIncidents = false;
+			    params.returnRoutes = true;
+			    params.returnDirections = true;				
+		
+		
+		// TESTING FOR CLOSEST TASK
+		routeGraphicLayer = new GraphicsLayer();
+        
+        var routePolylineSymbol = new SimpleLineSymbol(
+          SimpleLineSymbol.STYLE_SOLID, 
+          new Color([255,0,0]), 
+          4.0
+        );
+        var routeRenderer = new SimpleRenderer(routePolylineSymbol);
+        routeGraphicLayer.setRenderer(routeRenderer);
+
+        map.addLayer(routeGraphicLayer);
+				
+
+				
+		var facilityPointSymbol = new SimpleMarkerSymbol(
+          SimpleMarkerSymbol.STYLE_SQUARE, 
+          20,
+          new SimpleLineSymbol(
+            SimpleLineSymbol.STYLE_SOLID,
+            new Color([26,26,1]), 2
+          ),
+          new Color([255,0,0,0.90])
+        ); 
+
+		
+		var facilitiesGraphicsLayer = new GraphicsLayer();
+		var facilityRenderer = new SimpleRenderer(facilityPointSymbol);
+        facilitiesGraphicsLayer.setRenderer(facilityRenderer);
+       
+        map.addLayer(facilitiesGraphicsLayer);
+		
+		var facilities = new FeatureSet(map.getLayersVisibleAtScale()[1].graphics);
+        params.facilities = facilities;
+		
+		console.log("Parameters");
+		console.log(params);
+				
+		closestFacilityTask = new ClosestFacilityTask("https://route.arcgis.com/arcgis/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World");
+
+		closestFacilityTask.solve(params, function(solveResult){
+			console.log("Solve");
+			console.log(solveResult);
+			/*
+			array.forEach(solveResult.routes, function(route, index){
+			//build an array of route info
+			var attr = array.map(solveResult.directions[index].features, function(feature){
+			  return feature.attributes.text;
+			});
+					
+			routeGraphicLayer.add(route);
+			});
+			*/
+		});
+				
+			
+				
+				
+				
+				
+				
+				
+				
+				
+				
+						
+			}); // CLOSE ESRI REQUIRE
+		}); // CLOSE ESRIREGISTRY
+	}
 	
 	$scope.onMapLoad = function(map) {
 	
-            // this example requires other Esri modules like graphics, symbols, and toolbars
-            // so we load them up front using the esriLoader
             esriLoader.require([
                 'esri/toolbars/draw',
                 'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol',
-                'esri/symbols/PictureFillSymbol', 'esri/symbols/CartographicLineSymbol',
-                'esri/graphic',
-				'esri/geometry/Point',
-                'esri/Color'
+                'esri/graphic', 'esri/geometry/Point',
+                'esri/Color',
+				"esri/layers/GraphicsLayer", "esri/renderers/SimpleRenderer",
+				"esri/tasks/ClosestFacilityTask", "esri/tasks/ClosestFacilityParameters"
             ], function(
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol,
-                PictureFillSymbol, CartographicLineSymbol,
                 Graphic, Point,
-                Color
+                Color,
+				GraphicsLayer, SimpleRenderer,
+				ClosestFacilityTask, ClosestFacilityParameters
             ) {
 
-                var tb;
+				var line = new SimpleLineSymbol();
+				line.setStyle(SimpleLineSymbol.STYLE_DASH);
+				line.setWidth(6);
+				line.setColor(new Color([169, 0, 230, 1]));
 
-                // markerSymbol is used for point and multipoint, see //raphaeljs.com/icons/#talkq for more examples
-var line = new SimpleLineSymbol();
-line.setStyle(SimpleLineSymbol.STYLE_DASH);
-line.setWidth(6);
-line.setColor(new Color([169, 0, 230, 1]));
+				var marker = new SimpleMarkerSymbol();
+				marker.setOffset(0, 0);
+				marker.setColor(new Color([223, 115, 255, 0.52]));
+				marker.setSize(25);
+				marker.setOutline(line);
 
-var marker = new SimpleMarkerSymbol();
-marker.setOffset(0, 0);
-marker.setColor(new Color([223, 115, 255, 0.52]));
-marker.setSize(25);
-marker.setOutline(line);
+				var currentPoint = new Point(mapService.getCenter().lng, mapService.getCenter().lat);
+				var currentGeolocation = new Graphic(currentPoint, marker);
 
-var currentGeolocation = new Graphic(new Point(mapService.getCenter().lng, mapService.getCenter().lat), marker);
-// TESTING
-if (mapService.getShowCurrentGeolocationSymbol())
-	map.graphics.add(currentGeolocation);
-else
-	map.graphics.remove(currentGeolocation);
+				if (mapService.getShowCurrentGeolocationSymbol())
+					map.graphics.add(currentGeolocation);
+				else
+					map.graphics.remove(currentGeolocation);
 				
-
             });
-
         };
-		
 });

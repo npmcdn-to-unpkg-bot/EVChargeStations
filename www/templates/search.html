@@ -1,17 +1,19 @@
 <ion-view view-title="Search">
-	<ion-content>
-		<div class="list">
+	<ion-content scroll="false">
+		<form name="searchForm" ng-submit="submit(data)">
 
-		  <label class="item item-input item-select">
-			<div class="input-label">
-			  Island
-			</div>
-			<select ng-options="island as island.label for island in islands" ng-model="selected"></select>
-		  </label>
-
-		</div>
-		<button class="button button-full button-royal" ng-click="search(selected)">
-			Search
-		</button>
+			<label class="item item-input item-select">
+				<div class="input-label">Island</div>
+				<select ng-options="island as island.label for island in islands" ng-model="data.selectedIsland"></select>
+			</label>
+			<label class="item item-input item-select">
+				<div class="input-label">Charge Fees</div>
+				<select ng-options="chargeFee as chargeFee.label for chargeFee in chargeFees" ng-model="data.selectedChargeFee"></select>
+			</label>
+		
+			<button class="button button-full button-royal" type="submit">
+				Search
+			</button>
+		</form>
 	</ion-content>
 </ion-view>
