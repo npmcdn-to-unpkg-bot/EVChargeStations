@@ -118,13 +118,17 @@ angular.module('starter.controllers', [])
 	$scope.definitionExpression = mapService.getDefinitionExpression();
 	
 	$ionicPopover.fromTemplateUrl('templates/map_popover.html', {
-		scope: $scope,
+		scope: $scope
 	}).then(function(popover) {
 		$scope.popover = popover;
 	});
 	
+	$scope.closePopover = function() {
+		$scope.popover.hide();
+	};
+	
 	$scope.findNearestStation = function() {
-		
+		$scope.closePopover();
 		// GET CURRENT LOCATION
 		
 		esriRegistry.get('evcsMap').then(function(map){
@@ -263,7 +267,7 @@ angular.module('starter.controllers', [])
 		console.log("Parameters");
 		console.log(params);
 				
-		closestFacilityTask = new ClosestFacilityTask("https://route.arcgis.com/arcgis/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World");
+		closestFacilityTask = new ClosestFacilityTask("https://utility.arcgis.com/usrsvcs/servers/c9031a70848e439796f8a7b2feedc603/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World?token=e7NbTj-FaoqsegOznyCH-OM55OnNzUzY0fqml_hA38hXm3FphLMJceerAgiVUk39xN3QEn6qxnyqy8BWT7RISpx6LTx5k4JSABboqjrxEIfgQfIXspLB3R-AUhtVN3EQwgfCoR8wI03mghVwF3JYLC7xcc40nmUmdCMFbeosXB93aOQQPtNLUQiPgPu_l62m");
 
 		closestFacilityTask.solve(params, function(solveResult){
 			console.log("Solve");
