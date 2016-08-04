@@ -251,17 +251,11 @@ angular.module('starter.controllers', [])
 		
 		
         // TESTING
-		facilitiesGraphicsLayer.add(new Graphic(new Point(-17580710,2432955,map.spatialReference)));
-		facilitiesGraphicsLayer.add(new Graphic(new Point(-17578710,2432955,map.spatialReference)));
+		//facilitiesGraphicsLayer.add(new Graphic(new Point(-17580710,2432955,map.spatialReference)));
+		//facilitiesGraphicsLayer.add(new Graphic(new Point(-17578710,2432955,map.spatialReference)));
    
         var facilities = new FeatureSet();
         facilities.features = map.getLayer("evcsFeatureLayer").graphics;
-        // TESTING
-		
-		
-		
-		
-		//var facilities = new FeatureSet(map.getLayersVisibleAtScale()[1].graphics);
         params.facilities = facilities;
 		
 		console.log("Parameters");
