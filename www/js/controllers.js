@@ -148,6 +148,7 @@ angular.module('starter.controllers', [])
 					'esri/tasks/ClosestFacilityTask', 'esri/tasks/ClosestFacilityParameters',
 					'esri/tasks/FeatureSet',
 					"esri/tasks/RouteTask", "esri/tasks/RouteParameters",
+					"esri/geometry/webMercatorUtils",
 					"dojo/_base/array"
 				], function(
 					IdentityManager,
@@ -159,6 +160,7 @@ angular.module('starter.controllers', [])
 					ClosestFacilityTask, ClosestFacilityParameters,
 					FeatureSet,
 					RouteTask, RouteParameters,
+					webMercatorUtils,
 					array
 				) {
 
@@ -177,17 +179,28 @@ angular.module('starter.controllers', [])
 				marker.setColor(new Color([223, 115, 255, 0.52]));
 				marker.setSize(25);
 				marker.setOutline(line);
-						
-				var currentPoint = new Point(mapService.getCenter().lng, mapService.getCenter().lat);
-				var currentGeolocation = new Graphic(currentPoint, marker);
-				locationGeometry = currentGeolocation;
-				console.log("Current Geolocation");
-				console.log(locationGeometry);
 				
-				incidentFeatures = [];
-				incidentFeatures.push(locationGeometry);
-				incidents = new FeatureSet();
-				incidents.features = incidentFeatures;
+				// GET CURRENT LOCATION
+				var currentPoint = new Point(webMercatorUtils.lngLatToXY(mapService.getCenter().lng, mapService.getCenter().lat),map.spatialReference);
+				var currentGeolocation = new Graphic(currentPoint);
+
+				
+
+				
+		var incidentGraphicsLayer = new GraphicsLayer();
+		var incidentRenderer = new SimpleRenderer(marker);
+        incidentGraphicsLayer.setRenderer(incidentRenderer);
+		incidentGraphicsLayer.add(currentGeolocation);
+		map.addLayer(incidentGraphicsLayer);
+		
+		var incidents = new FeatureSet();
+        incidents.features = incidentGraphicsLayer.graphics;
+				
+				
+				
+				
+				
+				
 				
 				params = new ClosestFacilityParameters();
 				params.incidents = incidents;
@@ -196,10 +209,11 @@ angular.module('starter.controllers', [])
 			    params.defaultCutoff = 10.0;      
 			    params.returnIncidents = false;
 			    params.returnRoutes = true;
-			    params.returnDirections = true;				
+			    params.returnDirections = true;
+
 		
 		
-		// TESTING FOR CLOSEST TASK
+
 		routeGraphicLayer = new GraphicsLayer();
         
         var routePolylineSymbol = new SimpleLineSymbol(
@@ -231,7 +245,19 @@ angular.module('starter.controllers', [])
        
         map.addLayer(facilitiesGraphicsLayer);
 		
-		var facilities = new FeatureSet(map.getLayersVisibleAtScale()[1].graphics);
+		
+        // TESTING
+		facilitiesGraphicsLayer.add(new Graphic(new Point(-17580710,2432955,map.spatialReference)));
+		facilitiesGraphicsLayer.add(new Graphic(new Point(-17578710,2432955,map.spatialReference)));
+   
+        var facilities = new FeatureSet();
+        facilities.features = map.getLayer(map.graphicsLayerIds[0]).graphics;
+        // TESTING
+		
+		
+		
+		
+		//var facilities = new FeatureSet(map.getLayersVisibleAtScale()[1].graphics);
         params.facilities = facilities;
 		
 		console.log("Parameters");
@@ -242,7 +268,7 @@ angular.module('starter.controllers', [])
 		closestFacilityTask.solve(params, function(solveResult){
 			console.log("Solve");
 			console.log(solveResult);
-			/*
+			
 			array.forEach(solveResult.routes, function(route, index){
 			//build an array of route info
 			var attr = array.map(solveResult.directions[index].features, function(feature){
@@ -251,7 +277,7 @@ angular.module('starter.controllers', [])
 					
 			routeGraphicLayer.add(route);
 			});
-			*/
+			
 		});
 				
 			
