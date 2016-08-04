@@ -210,7 +210,7 @@ angular.module('starter.controllers', [])
 				params.incidents = incidents;
 
     			params.impedenceAttribute = "Miles";      
-			    params.defaultCutoff = 10.0;      
+			    params.defaultCutoff = 100.0;      
 			    params.returnIncidents = false;
 			    params.returnRoutes = true;
 			    params.returnDirections = true;
