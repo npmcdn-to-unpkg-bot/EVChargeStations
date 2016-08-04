@@ -255,7 +255,7 @@ angular.module('starter.controllers', [])
 		facilitiesGraphicsLayer.add(new Graphic(new Point(-17578710,2432955,map.spatialReference)));
    
         var facilities = new FeatureSet();
-        facilities.features = map.getLayer(map.graphicsLayerIds[0]).graphics;
+        facilities.features = map.getLayer("evcsFeatureLayer").graphics;
         // TESTING
 		
 		
@@ -338,4 +338,25 @@ angular.module('starter.controllers', [])
 				
             });
         };
+		
+	$scope.getLocation2 = function() {
+		locateService.getLocation().then(
+			function (result) {
+				console.log(result);
+				var geolocation = {
+					lng: result.coords.longitude,
+					lat: result.coords.latitude
+				}
+				
+				mapService.setCenter(geolocation);
+				mapService.setZoom(16);
+				mapService.setShowCurrentGeolocationSymbol(true);
+				
+			},
+			function (error) {
+				console.error(error);
+				alert("Sorry, no geolocation services are available. Please allow permission to use location services.");
+			});
+	}
+	
 });

@@ -1,15 +1,16 @@
 <ion-view view-title="Map">
-    <ion-nav-buttons side="right">
+    <ion-nav-buttons class="bar-royal" side="right">
       <button class="button button-icon icon ion-settings" ng-click="popover.show($event)"></button>
     </ion-nav-buttons>
-  <ion-content scroll="false">
+	<ion-content scroll="false">
 	
         <esri-map id="map" center="map.center" zoom="map.zoom" basemap="{{map.basemap}}" load="onMapLoad" register-as="evcsMap">
 			
 			<esri-feature-layer
 				url="http://services6.arcgis.com/GppfEaYzw3YLUhtB/arcgis/rest/services/Hawaii_Public_Electric_Vehicle_Charging_Stations/FeatureServer/0"
 				layer-options="{
-					outFields: ['*']
+					outFields: ['*'],
+					id: 'evcsFeatureLayer'
 				}"
 				definition-expression="{{definitionExpression}}">
 				
@@ -27,5 +28,9 @@
 			
         </esri-map>
 	
-  </ion-content>
+	</ion-content>
+	
+	<ion-footer-bar class="bar-royal">
+		<button class="button icon ion-android-locate" ng-click="getLocation2()"></button>
+	</ion-footer-bar>
 </ion-view>
