@@ -32,7 +32,7 @@ angular.module('starter.services', [])
 	return service;
 })
 
-.factory('mapService', function() {
+.factory('mapService', function(esriRegistry, esriLoader) {
 	var service = {};
 	
 	const ISLAND = {
@@ -190,6 +190,44 @@ angular.module('starter.services', [])
 	
 	service.getChargeFeeList = function() {
 		return CHARGE_FEE;
+	}
+	
+	service.mapCenterAndZoom = function(input) {
+		esriRegistry.get('evcsMap').then(function(map){
+			esriLoader.require([
+					'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', 'esri/Color',
+					'esri/graphic', 'esri/geometry/Point'
+				], function(
+					SimpleMarkerSymbol, SimpleLineSymbol, Color,
+					Graphic, Point
+				) {
+					
+				var line = new SimpleLineSymbol();
+				line.setStyle(SimpleLineSymbol.STYLE_DASH);
+				line.setWidth(6);
+				line.setColor(new Color([169, 0, 230, 1]));
+
+				var marker = new SimpleMarkerSymbol();
+				marker.setOffset(0, 0);
+				marker.setColor(new Color([223, 115, 255, 0.52]));
+				marker.setSize(25);
+				marker.setOutline(line);
+
+				var currentPoint = new Point(input.lng, input.lat);
+				var currentGeolocation = new Graphic(currentPoint, marker);
+
+				if (service.getShowCurrentGeolocationSymbol()) {
+					map.graphics.clear();
+					map.graphics.add(currentGeolocation);
+				}
+				else {
+					map.graphics.remove(currentGeolocation);
+				}
+				
+				map.centerAndZoom(currentPoint, 15);
+			
+				});
+		});
 	}
 	
 	return service;

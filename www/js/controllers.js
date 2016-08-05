@@ -15,7 +15,7 @@ angular.module('starter.controllers', [])
 				}
 				
 				mapService.setCenter(geolocation);
-				mapService.setZoom(16);
+				mapService.setZoom(15);
 				mapService.setShowCurrentGeolocationSymbol(true);
 				
 				$state.go('app.map');
@@ -91,7 +91,7 @@ angular.module('starter.controllers', [])
 	
 	$scope.geolocateOnMap = function(geolocation) {
 		mapService.setCenter(geolocation);
-		mapService.setZoom(16);
+		mapService.setZoom(15);
 		mapService.clearDefinitionExpression();
 		mapService.setShowCurrentGeolocationSymbol(true);
 		
@@ -100,7 +100,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate, $ionicPopover, locateService, mapService, esriRegistry) {
+.controller('MapController', function(esriLoader, $scope, $stateParams, $ionicSideMenuDelegate, $ionicPopover, $state, locateService, mapService, esriRegistry) {
 	$scope.$on('$ionicView.enter', function(){
 		$ionicSideMenuDelegate.canDragContent(false);
 	});
@@ -260,8 +260,9 @@ angular.module('starter.controllers', [])
 		
 		console.log("Parameters");
 		console.log(params);
-				
-		closestFacilityTask = new ClosestFacilityTask("https://utility.arcgis.com/usrsvcs/servers/c9031a70848e439796f8a7b2feedc603/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World?token=e7NbTj-FaoqsegOznyCH-OM55OnNzUzY0fqml_hA38hXm3FphLMJceerAgiVUk39xN3QEn6qxnyqy8BWT7RISpx6LTx5k4JSABboqjrxEIfgQfIXspLB3R-AUhtVN3EQwgfCoR8wI03mghVwF3JYLC7xcc40nmUmdCMFbeosXB93aOQQPtNLUQiPgPu_l62m");
+		
+		//https://route.arcgis.com/arcgis/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World
+		closestFacilityTask = new ClosestFacilityTask("https://utility.arcgis.com/usrsvcs/servers/e04d58a46f1f48688e4d4e7320e5c35f/rest/services/World/ClosestFacility/NAServer/ClosestFacility_World?token=W_6K4zXnLsJiWnepTB7acab8rs7VBqD1AwLogi1GEA_33evmvRnDQ9g9sX0yxAZINN40uPPyAe48UvePS-IZjIv67upHDdPFewBPIecXU6wqbF5dW8j8i4o8c6IH1ECvXrWpjJFzEOd9A-N_tXvr0P222h8YsxlqrOBglHwgeF2_eZ_FZXlkQfmLyI_6XTFhABlr4ezBPYtGA0hBP4MPAA..");
 
 		closestFacilityTask.solve(params, function(solveResult){
 			console.log("Solve");
@@ -297,16 +298,14 @@ angular.module('starter.controllers', [])
 	
             esriLoader.require([
                 'esri/toolbars/draw',
-                'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol',
+                'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', 'esri/Color',
                 'esri/graphic', 'esri/geometry/Point',
-                'esri/Color',
 				"esri/layers/GraphicsLayer", "esri/renderers/SimpleRenderer",
 				"esri/tasks/ClosestFacilityTask", "esri/tasks/ClosestFacilityParameters"
             ], function(
                 Draw,
-                SimpleMarkerSymbol, SimpleLineSymbol,
+                SimpleMarkerSymbol, SimpleLineSymbol, Color,
                 Graphic, Point,
-                Color,
 				GraphicsLayer, SimpleRenderer,
 				ClosestFacilityTask, ClosestFacilityParameters
             ) {
@@ -333,24 +332,29 @@ angular.module('starter.controllers', [])
             });
         };
 		
-	$scope.getLocation2 = function() {
+	$scope.getLocation = function() {
+		
 		locateService.getLocation().then(
 			function (result) {
-				console.log(result);
+				console.log("location");
 				var geolocation = {
 					lng: result.coords.longitude,
 					lat: result.coords.latitude
 				}
 				
 				mapService.setCenter(geolocation);
-				mapService.setZoom(16);
+				mapService.setZoom(15);
 				mapService.setShowCurrentGeolocationSymbol(true);
 				
+				mapService.mapCenterAndZoom(geolocation);
+				
+				//$state.go('app.home');
 			},
 			function (error) {
 				console.error(error);
 				alert("Sorry, no geolocation services are available. Please allow permission to use location services.");
 			});
+		
 	}
 	
 });
