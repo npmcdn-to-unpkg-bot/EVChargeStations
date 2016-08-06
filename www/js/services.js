@@ -4,10 +4,27 @@ angular.module('starter.services', [])
 	var service = {};
 	var featureServiceUrl = "http://services6.arcgis.com/GppfEaYzw3YLUhtB/arcgis/rest/services/Hawaii_Public_Electric_Vehicle_Charging_Stations/FeatureServer/0";
 	
+	var geocodeServiceUrl = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
+	var countryCode = "USA";
+	
 	service.getFeatures = function() {
 		return $http({
 				method: 'GET',
 				url: featureServiceUrl + "/query?where=1%3D1&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&resultType=none&distance=&units=esriSRUnit_Meter&outFields=*&returnGeometry=true&multipatchOption=&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnDistinctValues=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&quantizationParameters=&sqlFormat=none&f=pjson"
+		});
+	}
+	
+	service.geocodeSuggest = function(input) {
+		return $http({
+			method: 'GET',
+			url: geocodeServiceUrl + "/suggest?text=" + input + "&countryCode=" + countryCode + "&f=json"
+		});
+	}
+	
+	service.geocodeFind = function(input) {
+		return $http({
+			method: 'GET',
+			url: geocodeServiceUrl + "/findAddressCandidates?singleLine=" + input.text + "&magicKey=" + input.magicKey + "&f=json"
 		});
 	}
 	

@@ -27,7 +27,7 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('SearchController', function($scope, $state, mapService) {
+.controller('FilterController', function($scope, $state, mapService, remoteService) {
 	$scope.islands = mapService.getIslandList();
 	$scope.chargeFees = mapService.getChargeFeeList();
 	
@@ -56,7 +56,64 @@ angular.module('starter.controllers', [])
 		mapService.setShowCurrentGeolocationSymbol(false);
 		$state.go('app.map');
 	}
+	
+	$scope.search = function(input) {
+		if (input.length > 3) {
+		remoteService.geocodeSuggest(input).then(
+			function (result) {
+				console.log(result);
+				$scope.suggestions = result.data.suggestions;
+			},
+			function (error) {
+				console.error(error);
+			});
+		}
+		else {
+			$scope.suggestions = null;
+		}
+	}
 })
+
+.controller('SearchController', function($scope, $state, mapService, remoteService) {
+		
+	$scope.suggest = function(input) {
+		if (input.length > 3) {
+		remoteService.geocodeSuggest(input).then(
+			function (result) {
+				console.log(result);
+				$scope.suggestions = result.data.suggestions;
+			},
+			function (error) {
+				console.error(error);
+			});
+		}
+		else {
+			$scope.suggestions = null;
+		}
+	}
+	
+	$scope.search = function(input) {
+		console.log("here");
+		remoteService.geocodeFind(input).then(
+			function (result) {
+				console.log(result);
+				var geolocation = {
+					lng: result.data.candidates[0].location.x,
+					lat: result.data.candidates[0].location.y
+				}
+				mapService.setCenter(geolocation);
+				mapService.setZoom(15);
+				mapService.setShowCurrentGeolocationSymbol(true);
+				
+				$state.go('app.map');	
+			},
+			function (error) {
+				console.error(error);
+			});
+		}
+		
+})
+
 
 .controller('BrowseController', function($scope, $rootScope, $state, $ionicLoading, remoteService, esriRegistry, esriLoader, mapService) {
 	$ionicLoading.show({

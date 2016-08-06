@@ -52,6 +52,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 			}
 		}
 	})
+	
+	.state('app.filter', {
+		url: '/filter',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/filter.html',
+				controller: 'FilterController'
+			}
+		}
+	})
 
 	.state('app.browse', {
 		url: '/browse',
