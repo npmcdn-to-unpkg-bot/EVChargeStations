@@ -1,0 +1,19 @@
+<ion-view view-title="Stations"> 
+	<ion-content>
+		<ion-list>
+			<ion-item ng-repeat="feature in features" class="item-icon-right" ng-click="onListItemClick({{feature.attributes}})">
+<!--					<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({lat:{{feature.attributes.Latitude}}, lng:{{feature.attributes.Longitude}}})" class="item-text-wrap"> -->
+				<div>
+					<p>{{feature.attributes.Property_Business_Name}}</p>
+					<p>Charge Fee: {{feature.attributes.Charger_Fee}}</p>
+					<p>Hours of Operation: {{feature.attributes.Hours_of_Operation}}</p>
+				</div>
+				<i class="icon ion-chevron-right icon-accessory"></i>
+<!--				<div ng-repeat="(attribute, data) in feature.attributes" ng-click="onListItemClick({{feature.attributes}})" class="item-text-wrap">
+					{{attribute}}: {{data}}
+				</div>
+-->
+			</ion-item>
+		</ion-list>
+	</ion-content>
+</ion-view>
