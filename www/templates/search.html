@@ -1,15 +1,17 @@
 <ion-view view-title="Search">
+	<ion-header-bar class="bar-light bar-subheader">
+		<i class="icon ion-ios-search placeholder-icon"></i>
+		<input type="text" class="fullWidth" placeholder="Enter Street/Address/Place"
+			ng-model="search.input" ng-change="suggest(search.input)" autofocus="true" autocapitalize="off" autocorrect="off" />
+		<button ng-if="search.input.length" class="button button-icon ion-android-close input-button" ng-click="clearInput()"></button>
+	</ion-header-bar>
 	<ion-content scroll="false">
-		<form name="searchForm" ng-submit="submit(data)">
-
-			<label class="item item-input">
-				<span class="input-label">Search</span>
-				<input type="text" ng-model="input" ng-change="suggest(input)">
-			</label>
-			<ion-item ng-repeat="suggestion in suggestions" class="item-icon-right" ng-click="search(suggestion)">
-				{{suggestion.text}}
-			</ion-item>
-
-		</form>
+		<ion-item ng-repeat="suggestion in suggestions" class="item-icon-right" ng-click="search(suggestion)">
+			{{suggestion.text}}
+			<i class="icon ion-chevron-right icon-accessory"></i>
+		</ion-item>
+		<ion-item ng-show="suggestions.length < 1">
+			No Results...
+		</ion-item>			
 	</ion-content>
 </ion-view>

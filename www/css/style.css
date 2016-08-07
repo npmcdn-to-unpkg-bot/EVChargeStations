@@ -2,6 +2,10 @@
 	width: 190px;
 }
 
+.fullWidth {
+  width: 100%;
+}
+
 #map {
     display: block;
     height: 100%;

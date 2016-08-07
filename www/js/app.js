@@ -7,7 +7,7 @@
 //'use strict';
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'esri.map'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $templateCache, $http) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -20,6 +20,9 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+	
+	 $http.get('templates/map.html', {cache:$templateCache});
+
   });
 })
 
@@ -53,22 +56,22 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
 		}
 	})
 	
-	.state('app.filter', {
-		url: '/filter',
-		views: {
-			'menuContent': {
-				templateUrl: 'templates/filter.html',
-				controller: 'FilterController'
-			}
-		}
-	})
-
 	.state('app.browse', {
 		url: '/browse',
 		views: {
 			'menuContent': {
 				templateUrl: 'templates/browse.html',
 				controller: 'BrowseController'
+			}
+		}
+	})
+
+	.state('app.stations', {
+		url: '/stations',
+		views: {
+			'menuContent': {
+				templateUrl: 'templates/stations.html',
+				controller: 'StationsController'
 			}
 		}
     })

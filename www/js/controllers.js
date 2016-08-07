@@ -27,7 +27,7 @@ angular.module('starter.controllers', [])
 	}
 })
 
-.controller('FilterController', function($scope, $state, mapService, remoteService) {
+.controller('BrowseController', function($scope, $state, mapService, remoteService) {
 	$scope.islands = mapService.getIslandList();
 	$scope.chargeFees = mapService.getChargeFeeList();
 	
@@ -56,28 +56,17 @@ angular.module('starter.controllers', [])
 		mapService.setShowCurrentGeolocationSymbol(false);
 		$state.go('app.map');
 	}
-	
-	$scope.search = function(input) {
-		if (input.length > 3) {
-		remoteService.geocodeSuggest(input).then(
-			function (result) {
-				console.log(result);
-				$scope.suggestions = result.data.suggestions;
-			},
-			function (error) {
-				console.error(error);
-			});
-		}
-		else {
-			$scope.suggestions = null;
-		}
-	}
+
 })
 
 .controller('SearchController', function($scope, $state, mapService, remoteService) {
-		
+	
+	$scope.clearInput = function() {
+		$scope.search.input = null;
+	}
+	
 	$scope.suggest = function(input) {
-		if (input.length > 3) {
+		if (input.length > 1) {
 		remoteService.geocodeSuggest(input).then(
 			function (result) {
 				console.log(result);
@@ -93,7 +82,6 @@ angular.module('starter.controllers', [])
 	}
 	
 	$scope.search = function(input) {
-		console.log("here");
 		remoteService.geocodeFind(input).then(
 			function (result) {
 				console.log(result);
@@ -105,7 +93,10 @@ angular.module('starter.controllers', [])
 				mapService.setZoom(15);
 				mapService.setShowCurrentGeolocationSymbol(true);
 				
-				$state.go('app.map');	
+				$state.go('app.map');
+				
+				$scope.suggestions = null;
+				$scope.search.input = null;
 			},
 			function (error) {
 				console.error(error);
@@ -115,12 +106,18 @@ angular.module('starter.controllers', [])
 })
 
 
-.controller('BrowseController', function($scope, $rootScope, $state, $ionicLoading, remoteService, esriRegistry, esriLoader, mapService) {
+.controller('StationsController', function($scope, $rootScope, $state, $ionicLoading, mapService, esriRegistry, esriLoader, mapService) {
 	$ionicLoading.show({
       template: 'Loading...'
     });
 	
-	remoteService.getFeatures().then(
+	var features = null;
+	features = mapService.getFeatures();
+	console.log(features);
+	$scope.features = features;
+	$ionicLoading.hide();
+	/*
+	mapService.getFeatures().then(
 		function (result) {
 			var features = result.data.features;
 			$scope.features = features;
@@ -132,7 +129,7 @@ angular.module('starter.controllers', [])
 			console.error(error);
 			$ionicLoading.hide();
 		});
-		
+	*/	
 	$scope.onListItemClick = function(attributes) {
 		var data = {
 			attributes: attributes
@@ -354,18 +351,23 @@ angular.module('starter.controllers', [])
 	$scope.onMapLoad = function(map) {
 	
             esriLoader.require([
+				"esri/config",
                 'esri/toolbars/draw',
                 'esri/symbols/SimpleMarkerSymbol', 'esri/symbols/SimpleLineSymbol', 'esri/Color',
                 'esri/graphic', 'esri/geometry/Point',
 				"esri/layers/GraphicsLayer", "esri/renderers/SimpleRenderer",
 				"esri/tasks/ClosestFacilityTask", "esri/tasks/ClosestFacilityParameters"
             ], function(
+				esriConfig,
                 Draw,
                 SimpleMarkerSymbol, SimpleLineSymbol, Color,
                 Graphic, Point,
 				GraphicsLayer, SimpleRenderer,
 				ClosestFacilityTask, ClosestFacilityParameters
             ) {
+
+				// FIX PROXY ISSUE WHERE CLOSEST FACILITY CALL THROWING WARNING
+				esriConfig.defaults.io.corsEnabledServers.push("utility.arcgis.com");
 
 				var line = new SimpleLineSymbol();
 				line.setStyle(SimpleLineSymbol.STYLE_DASH);
@@ -388,6 +390,10 @@ angular.module('starter.controllers', [])
 				
             });
         };
+		
+	$scope.onFeatureLayerLoad = function (featureLayer) {
+		mapService.setFeatures(featureLayer.graphics);
+	}	
 		
 	$scope.getLocation = function() {
 		

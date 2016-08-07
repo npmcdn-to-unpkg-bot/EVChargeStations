@@ -5,7 +5,7 @@ angular.module('starter.services', [])
 	var featureServiceUrl = "http://services6.arcgis.com/GppfEaYzw3YLUhtB/arcgis/rest/services/Hawaii_Public_Electric_Vehicle_Charging_Stations/FeatureServer/0";
 	
 	var geocodeServiceUrl = "http://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer";
-	var countryCode = "USA";
+	var searchExtent =  "%7B%22xmin%22%3A-18024462.76586627%2C%22ymin%22%3A2103211.678467971%2C%22xmax%22%3A-17046068.80381606%2C%22ymax%22%3A2577121.25383604%2C%22spatialReference%22%3A%7B%22wkid%22%3A102100%7D%7D";
 	
 	service.getFeatures = function() {
 		return $http({
@@ -17,7 +17,7 @@ angular.module('starter.services', [])
 	service.geocodeSuggest = function(input) {
 		return $http({
 			method: 'GET',
-			url: geocodeServiceUrl + "/suggest?text=" + input + "&countryCode=" + countryCode + "&f=json"
+			url: geocodeServiceUrl + "/suggest?text=" + input + "&searchExtent=" + searchExtent + "&f=json"
 		});
 	}
 	
@@ -114,6 +114,7 @@ angular.module('starter.services', [])
 	var basemap = "topo";
 	var definitionExpression = "";
 	var showCurrentGeolocationSymbol = false;
+	var features = [];
 	
 	service.setCenter = function(input) {
 		geolocation = input;
@@ -245,6 +246,14 @@ angular.module('starter.services', [])
 			
 				});
 		});
+	}
+	
+	service.getFeatures = function() {
+		return features;
+	}
+	
+	service.setFeatures = function(input) {
+		features = input;
 	}
 	
 	return service;
